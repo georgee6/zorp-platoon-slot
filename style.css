@@ -14,6 +14,7 @@ body {
     grid-template-rows: repeat(3, 100px);    /* 3 rows */
     gap: 5px;
     margin-bottom: 20px;
+    width: max-content;
 }
 
 .reel {
@@ -22,6 +23,7 @@ body {
     background-size: cover;
     border: 2px solid white;
     border-radius: 10px;
+    transition: transform 0.5s ease-out;
 }
 
 #controls {
