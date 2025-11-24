@@ -3,26 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3-Reel Slot Machine</title>
+<title>Zorp Slot Machine</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div id="background"></div>
 
-<div id="reelsContainer"></div>
+<div id="container">
+    <div id="keyLeft" class="symbol-key"></div>
+    <div id="mainContent">
+        <div id="reelsContainer"></div>
 
-<div id="controls">
-    <label>Wager: <input type="number" id="wager" value="1" min="1"></label>
-    <button id="spinButton">Spin</button>
+        <!-- Display spin winnings -->
+        <div id="spinAmountDisplay"></div>
+
+        <!-- Bonus counters, hidden by default -->
+        <div id="freeSpinsCounter" style="display:none">Free Spins: 0</div>
+        <div id="bonusPointsCounter" style="display:none">Bonus Points: 0</div>
+
+        <div id="controls">
+            <span id="balance">Balance: 100</span>
+            <input type="number" id="wager" value="1" min="1" max="50">
+            <button id="spinButton">SPIN</button>
+        </div>
+
+        <div id="notification"></div>
+    </div>
+    <div id="keyRight" class="symbol-key"></div>
 </div>
 
-<div id="status">
-    <div id="balance">Balance: 100</div>
-    <div id="spinAmountDisplay"></div>
-    <div id="notification"></div>
-    <div id="freeSpinsCounter"></div>
-    <div id="bonusPointsCounter"></div>
-</div>
-
-<script src="slot.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
