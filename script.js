@@ -91,16 +91,16 @@ function updateCounters(){
 
 // Define paylines for 7 reels
 const paylines = [
-    [0,1,2,3,4,5,6],          // Top row
-    [7,8,9,10,11,12,13],      // Middle row
-    [14,15,16,17,18,19,20],   // Bottom row
-    [0,8,16,10,4,12,20],      // V-shape
-    [14,6,16,10,4,12,0],      // Inverted V
-    [0,7,16,10,18,5,20],      // Zig-zag 1
-    [14,8,2,10,18,12,6],      // Zig-zag 2
-    [7,1,9,10,11,5,13],       // W-shape
-    [7,13,9,10,11,5,7],       // M-shape
-    [0,8,2,10,18,12,20]       // Random pattern
+    [0,1,2,3,4,5,6],
+    [7,8,9,10,11,12,13],
+    [14,15,16,17,18,19,20],
+    [0,8,16,10,4,12,20],
+    [14,6,16,10,4,12,0],
+    [0,7,16,10,18,5,20],
+    [14,8,2,10,18,12,6],
+    [7,1,9,10,11,5,13],
+    [7,13,9,10,11,5,7],
+    [0,8,2,10,18,12,20]
 ];
 
 // Main spin
@@ -166,7 +166,7 @@ function spin(){
         }
     }
 
-    // Animate reels
+    // Animate reels (smooth slow-down)
     for(let c=0;c<reelCount;c++){
         setTimeout(()=>{
             const startTime = Date.now();
