@@ -126,7 +126,6 @@ function spin(){
                     }
                     requestAnimationFrame(animateReel);
                 } else {
-                    // Set final symbols
                     for(let r=0;r<rowCount;r++){
                         const idx=r*reelCount+c;
                         const sym=finalSymbols[idx];
@@ -136,12 +135,10 @@ function spin(){
                         reels[idx].style.border='2px solid white';
                     }
                     if(c===reelCount-1){
-                        // Check wins
                         const winAmount = checkWin(boosted);
                         freeSpins = Math.max(0, freeSpins-1);
                         spinButton.disabled=false;
 
-                        // Pause spin sound at current time
                         songPausedTime = spinSound.currentTime;
                         spinSound.pause();
 
@@ -172,10 +169,9 @@ function checkWin(boosted=false){
             winAmount += rowWin;
             row.forEach(d=>d.style.border='3px solid red');
 
-            // Custom symbol message
-            messages.push(`${symbolMessages[sym]} (Row ${r+1} wins ${rowWin})`);
+            // **Modified: no parentheses extra text**
+            messages.push(symbolMessages[sym]);
 
-            // Play symbol audio
             symbolSounds[sym].currentTime=0;
             symbolSounds[sym].play();
             if(inBonus) bonusPoints += rowWin;
@@ -189,7 +185,10 @@ function checkWin(boosted=false){
         const diagWin=symbolPay[sym1]*wager;
         winAmount+=diagWin;
         diag1.forEach(d=>d.style.border='3px solid red');
-        messages.push(`${symbolMessages[sym1]} (Diagonal TL-BR wins ${diagWin})`);
+
+        // **Modified**
+        messages.push(symbolMessages[sym1]);
+
         symbolSounds[sym1].currentTime=0;
         symbolSounds[sym1].play();
         if(inBonus) bonusPoints+=diagWin;
@@ -201,7 +200,10 @@ function checkWin(boosted=false){
         const diagWin=symbolPay[sym2]*wager;
         winAmount+=diagWin;
         diag2.forEach(d=>d.style.border='3px solid red');
-        messages.push(`${symbolMessages[sym2]} (Diagonal BL-TR wins ${diagWin})`);
+
+        // **Modified**
+        messages.push(symbolMessages[sym2]);
+
         symbolSounds[sym2].currentTime=0;
         symbolSounds[sym2].play();
         if(inBonus) bonusPoints+=diagWin;
