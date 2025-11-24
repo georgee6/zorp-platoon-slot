@@ -14,7 +14,7 @@ let freeSpins = 0;
 let bonusPoints = 0;
 let inBonus = false;
 
-const reelCount = 7;
+const reelCount = 3;
 const rowCount = 3;
 
 const images = ['10.png','jack.png','queen.png','king.png','ace.png','bonus.png','wild.png'];
@@ -29,6 +29,7 @@ const symbolMessages = {
     'wild.png': 'AUUUUHHH'
 };
 
+// Weighted symbols
 const weights = {'10.png':40,'jack.png':25,'queen.png':15,'king.png':10,'ace.png':5,'bonus.png':4,'wild.png':1};
 const weightedSymbols = [];
 for(const s in weights){
@@ -38,6 +39,7 @@ for(const s in weights){
 const reels = [];
 const currentSymbols = Array.from({length: rowCount}, ()=>Array(reelCount).fill(null));
 
+// Initialize reels
 for(let r=0;r<rowCount;r++){
     for(let c=0;c<reelCount;c++){
         const div = document.createElement('div');
@@ -108,7 +110,7 @@ function spin(){
     for(let c=0;c<reelCount;c++){
         setTimeout(()=>{
             const start = Date.now();
-            const duration = 2000 + c*300;
+            const duration = 1500 + c*300;
             function animateReel(){
                 const elapsed = Date.now()-start;
                 if(elapsed < duration){
