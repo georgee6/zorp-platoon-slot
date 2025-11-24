@@ -11,7 +11,7 @@ let balance = 100;
 let freeSpins = 0;
 let bonusPoints = 0;
 let inBonus = false;
-const reelCount = 3;
+const reelCount = 7;
 const rowCount = 3;
 
 // Symbols, payouts, sounds, messages
@@ -89,6 +89,20 @@ function updateCounters(){
     }
 }
 
+// Define paylines for 7 reels
+const paylines = [
+    [0,1,2,3,4,5,6],          // Top row
+    [7,8,9,10,11,12,13],      // Middle row
+    [14,15,16,17,18,19,20],   // Bottom row
+    [0,8,16,10,4,12,20],      // V-shape
+    [14,6,16,10,4,12,0],      // Inverted V
+    [0,7,16,10,18,5,20],      // Zig-zag 1
+    [14,8,2,10,18,12,6],      // Zig-zag 2
+    [7,1,9,10,11,5,13],       // W-shape
+    [7,13,9,10,11,5,7],       // M-shape
+    [0,8,2,10,18,12,20]       // Random pattern
+];
+
 // Main spin
 function spin(){
     const wager = parseInt(wagerInput.value);
@@ -131,15 +145,13 @@ function spin(){
     let finalSymbols = [];
 
     if(!bonusTriggered){
-        const isLosingSpin = Math.random() < 0.30; // 30% chance lose
-
+        const isLosingSpin = Math.random() < 0.30; // 30% lose
         for(let r=0;r<rowCount;r++){
             for(let c=0;c<reelCount;c++){
                 if(isLosingSpin){
                     let sym;
-                    do {
-                        sym = weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)];
-                    } while (sym === finalSymbols[r*reelCount]); 
+                    do { sym = weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)]; }
+                    while (sym === finalSymbols[r*reelCount]);
                     finalSymbols[r*reelCount+c] = sym;
                 } else {
                     finalSymbols[r*reelCount+c] = weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)];
@@ -147,7 +159,6 @@ function spin(){
             }
         }
     } else {
-        // Bonus spin: all wilds
         for(let r=0;r<rowCount;r++){
             for(let c=0;c<reelCount;c++){
                 finalSymbols[r*reelCount+c] = 'wild.png';
@@ -155,15 +166,14 @@ function spin(){
         }
     }
 
-    // Animate reels smoothly
+    // Animate reels
     for(let c=0;c<reelCount;c++){
         setTimeout(()=>{
             const startTime = Date.now();
-            let speed = 50; // initial speed in ms
+            let speed = 50;
 
             function frame(){
                 const elapsed = Date.now() - startTime;
-
                 for(let r=0;r<rowCount;r++){
                     const idx = r*reelCount+c;
                     if(!bonusTriggered){
@@ -172,9 +182,7 @@ function spin(){
                     reels[idx].style.transform = `translateY(${Math.random()*20-10}px)`;
                     reels[idx].style.border='2px solid white';
                 }
-
-                speed *= 1.02; // gradually slow down
-
+                speed *= 1.02;
                 if(elapsed < spinDurationPerReel){
                     setTimeout(frame, speed);
                 } else {
@@ -186,7 +194,6 @@ function spin(){
                         reels[idx].dataset.symbol = sym;
                         reels[idx].style.border='2px solid white';
                     }
-
                     if(c === reelCount-1){
                         const winAmount = checkWin();
                         if(freeSpins > 0 && !bonusTriggered) freeSpins--;
@@ -208,64 +215,33 @@ function spin(){
     }
 }
 
-// Check wins
+// Check wins for all paylines
 function checkWin(){
     const wager = parseInt(wagerInput.value);
     let messages = [];
     let winAmount = 0;
 
-    // Rows
-    for(let r=0;r<rowCount;r++){
-        const row = reels.slice(r*reelCount,(r+1)*reelCount);
-        const sym = row[0].dataset.symbol;
-        if(row.every(d=>d.dataset.symbol===sym)){
-            const rowWin = symbolPay[sym]*wager;
-            winAmount += rowWin;
-            row.forEach(d=>d.style.border='3px solid red');
+    paylines.forEach(line => {
+        const symbolsInLine = line.map(idx => reels[idx].dataset.symbol);
+        if(symbolsInLine.every(s => s === symbolsInLine[0])){
+            const sym = symbolsInLine[0];
+            const lineWin = symbolPay[sym] * wager;
+            winAmount += lineWin;
 
+            line.forEach(idx => reels[idx].style.border='3px solid red');
             messages.push(symbolMessages[sym]);
-
             symbolSounds[sym].currentTime = 0;
             symbolSounds[sym].play();
-            if(inBonus) bonusPoints += rowWin;
+            if(inBonus) bonusPoints += lineWin;
         }
-    }
+    });
 
-    // Diagonals
-    const diag1=[reels[0],reels[4],reels[8]];
-    const sym1=diag1[0].dataset.symbol;
-    if(diag1.every(d=>d.dataset.symbol===sym1)){
-        const diagWin = symbolPay[sym1]*wager;
-        winAmount += diagWin;
-        diag1.forEach(d=>d.style.border='3px solid red');
-
-        messages.push(symbolMessages[sym1]);
-        symbolSounds[sym1].currentTime = 0;
-        symbolSounds[sym1].play();
-        if(inBonus) bonusPoints += diagWin;
-    }
-
-    const diag2=[reels[6],reels[4],reels[2]];
-    const sym2=diag2[0].dataset.symbol;
-    if(diag2.every(d=>d.dataset.symbol===sym2)){
-        const diagWin = symbolPay[sym2]*wager;
-        winAmount += diagWin;
-        diag2.forEach(d=>d.style.border='3px solid red');
-
-        messages.push(symbolMessages[sym2]);
-        symbolSounds[sym2].currentTime = 0;
-        symbolSounds[sym2].play();
-        if(inBonus) bonusPoints += diagWin;
-    }
-
-    // Remove duplicates
     let uniqueMessages = [...new Set(messages)];
 
     balance += winAmount;
     balanceLabel.textContent = `Balance: ${balance}`;
     notificationLabel.textContent = uniqueMessages.length ? uniqueMessages.join(' | ') : 'No win this spin.';
     notificationLabel.textContent = notificationLabel.textContent.replace(/\s*\(.*?\)/g,'');
-
     spinAmountDisplay.textContent = winAmount ? `Won: ${winAmount}` : '';
 
     if(inBonus) updateCounters();
