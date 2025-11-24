@@ -208,12 +208,15 @@ function checkWin(boosted=false){
     // Remove duplicate messages
     let uniqueMessages = [...new Set(messages)];
 
-    // 🔥 NEW: Remove anything inside parentheses, guaranteed
-    uniqueMessages = uniqueMessages.map(m => m.replace(/\s*\(.*?\)/g, ''));
+    // (No parentheses added here — you requested no changes)
 
     balance += winAmount;
     balanceLabel.textContent=`Balance: ${balance}`;
     notificationLabel.textContent = uniqueMessages.length ? uniqueMessages.join(' | ') : 'No win this spin.';
+
+    // ✅ FINAL CLEANUP — REMOVE ANYTHING LIKE (Row 2 wins 2)
+    notificationLabel.textContent = notificationLabel.textContent.replace(/\s*\(.*?\)/g, '');
+
     spinAmountDisplay.textContent=winAmount ? `Won: ${winAmount}` : '';
 
     if(inBonus) updateCounters();
