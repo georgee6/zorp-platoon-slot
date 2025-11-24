@@ -14,7 +14,7 @@ let inBonus = false;
 const reelCount = 3;
 const rowCount = 3;
 
-// Symbols, payouts, sounds, and custom messages
+// Symbols, payouts, sounds, and messages
 const images = ['10.png','jack.png','queen.png','king.png','ace.png','bonus.png','wild.png'];
 const symbolPay = {'10.png':1,'jack.png':2,'queen.png':3,'king.png':5,'ace.png':20,'bonus.png':3,'wild.png':0};
 const symbolSounds = {
@@ -37,15 +37,21 @@ const symbolMessages = {
 };
 
 // Weighted symbols for realistic odds
-const weightedSymbols = [
-    '10.png','10.png','10.png','10.png','10.png','10.png','10.png','10.png','10.png', // 10 common
-    'jack.png','jack.png','jack.png','jack.png','jack.png',                              // jack
-    'queen.png','queen.png','queen.png',                                                // queen
-    'king.png','king.png',                                                              // king
-    'ace.png',                                                                           // ace rare
-    'bonus.png','bonus.png',                                                             // bonus rare
-    'wild.png'                                                                           // wild very rare
-];
+const weights = {
+    '10.png': 40,
+    'jack.png': 25,
+    'queen.png': 15,
+    'king.png': 10,
+    'ace.png': 5,
+    'bonus.png': 4,
+    'wild.png': 1
+};
+const weightedSymbols = [];
+for (const sym in weights) {
+    for (let i = 0; i < weights[sym]; i++) {
+        weightedSymbols.push(sym);
+    }
+}
 
 const reels = [];
 const currentSymbols = Array.from({length: rowCount},()=>Array(reelCount).fill(null));
@@ -108,6 +114,7 @@ function spin(){
         freeSpins = 10;
         bonusPoints = 0;
 
+        // Fill screen with wilds for bonus visual effect
         for(let r=0;r<rowCount;r++){
             for(let c=0;c<reelCount;c++){
                 const idx = r*reelCount+c;
@@ -123,7 +130,7 @@ function spin(){
 
     let finalSymbols = [];
 
-    // If no bonus, generate weighted normal spin
+    // Generate normal spin symbols if no bonus
     if(!bonusTriggered){
         for(let r=0;r<rowCount;r++){
             for(let c=0;c<reelCount;c++){
@@ -131,7 +138,6 @@ function spin(){
             }
         }
     } else {
-        // Use wilds for animation effect
         for(let r=0;r<rowCount;r++){
             for(let c=0;c<reelCount;c++){
                 finalSymbols[r*reelCount+c] = 'wild.png';
@@ -148,10 +154,10 @@ function spin(){
                 if(elapsed < spinDurationPerReel){
                     for(let r=0;r<rowCount;r++){
                         const idx = r*reelCount+c;
-                        if(!bonusTriggered){ // animate only normal spins
-                            reels[idx].style.backgroundImage=`url(${weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)]})`;
+                        if(!bonusTriggered){
+                            reels[idx].style.backgroundImage = `url(${weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)]})`;
                         }
-                        reels[idx].style.transform=`translateY(${Math.random()*20-10}px)`;
+                        reels[idx].style.transform = `translateY(${Math.random()*20-10}px)`;
                         reels[idx].style.border='2px solid white';
                     }
                     requestAnimationFrame(animateReel);
@@ -185,7 +191,7 @@ function spin(){
     }
 }
 
-// Check win, play symbol audio, show symbol messages
+// Check wins
 function checkWin(){
     const wager = parseInt(wagerInput.value);
     let messages = [];
@@ -241,6 +247,8 @@ function checkWin(){
     balance += winAmount;
     balanceLabel.textContent = `Balance: ${balance}`;
     notificationLabel.textContent = uniqueMessages.length ? uniqueMessages.join(' | ') : 'No win this spin.';
+
+    // Remove parentheses just in case
     notificationLabel.textContent = notificationLabel.textContent.replace(/\s*\(.*?\)/g, '');
 
     spinAmountDisplay.textContent = winAmount ? `Won: ${winAmount}` : '';
