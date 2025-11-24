@@ -131,16 +131,15 @@ function spin(){
     let finalSymbols = [];
 
     if(!bonusTriggered){
-        const isLosingSpin = Math.random() < 0.30; // 30% chance of losing spin
+        const isLosingSpin = Math.random() < 0.30; // 30% chance lose
 
         for(let r=0;r<rowCount;r++){
             for(let c=0;c<reelCount;c++){
                 if(isLosingSpin){
-                    // Force row to not match
                     let sym;
                     do {
                         sym = weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)];
-                    } while (sym === finalSymbols[r*reelCount]); // avoid matching first symbol
+                    } while (sym === finalSymbols[r*reelCount]); 
                     finalSymbols[r*reelCount+c] = sym;
                 } else {
                     finalSymbols[r*reelCount+c] = weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)];
@@ -156,48 +155,55 @@ function spin(){
         }
     }
 
-    // Animate reels
+    // Animate reels smoothly
     for(let c=0;c<reelCount;c++){
         setTimeout(()=>{
-            const start = Date.now();
-            function animateReel(){
-                const elapsed = Date.now()-start;
-                if(elapsed < spinDurationPerReel){
-                    for(let r=0;r<rowCount;r++){
-                        const idx = r*reelCount+c;
-                        if(!bonusTriggered){
-                            reels[idx].style.backgroundImage = `url(${weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)]})`;
-                        }
-                        reels[idx].style.transform = `translateY(${Math.random()*20-10}px)`;
-                        reels[idx].style.border='2px solid white';
+            const startTime = Date.now();
+            let speed = 50; // initial speed in ms
+
+            function frame(){
+                const elapsed = Date.now() - startTime;
+
+                for(let r=0;r<rowCount;r++){
+                    const idx = r*reelCount+c;
+                    if(!bonusTriggered){
+                        reels[idx].style.backgroundImage = `url(${weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)]})`;
                     }
-                    requestAnimationFrame(animateReel);
+                    reels[idx].style.transform = `translateY(${Math.random()*20-10}px)`;
+                    reels[idx].style.border='2px solid white';
+                }
+
+                speed *= 1.02; // gradually slow down
+
+                if(elapsed < spinDurationPerReel){
+                    setTimeout(frame, speed);
                 } else {
                     for(let r=0;r<rowCount;r++){
-                        const idx = r*reelCount+c;
+                        const idx=r*reelCount+c;
                         const sym = finalSymbols[idx];
                         currentSymbols[r][c] = sym;
                         reels[idx].style.backgroundImage = `url(${sym})`;
                         reels[idx].dataset.symbol = sym;
                         reels[idx].style.border='2px solid white';
                     }
-                    if(c === reelCount - 1){
+
+                    if(c === reelCount-1){
                         const winAmount = checkWin();
                         if(freeSpins > 0 && !bonusTriggered) freeSpins--;
-                        spinButton.disabled = false;
+                        spinButton.disabled=false;
 
                         songPausedTime = spinSound.currentTime;
                         spinSound.pause();
 
                         updateCounters();
                         if(freeSpins === 0 && inBonus){
-                            inBonus = false;
+                            inBonus=false;
                             updateCounters();
                         }
                     }
                 }
             }
-            animateReel();
+            frame();
         }, c*200);
     }
 }
@@ -258,9 +264,7 @@ function checkWin(){
     balance += winAmount;
     balanceLabel.textContent = `Balance: ${balance}`;
     notificationLabel.textContent = uniqueMessages.length ? uniqueMessages.join(' | ') : 'No win this spin.';
-
-    // Remove parentheses if any
-    notificationLabel.textContent = notificationLabel.textContent.replace(/\s*\(.*?\)/g, '');
+    notificationLabel.textContent = notificationLabel.textContent.replace(/\s*\(.*?\)/g,'');
 
     spinAmountDisplay.textContent = winAmount ? `Won: ${winAmount}` : '';
 
