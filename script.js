@@ -1,3 +1,5 @@
+document.addEventListener('DOMContentLoaded', () => {
+
 const reelsContainer = document.getElementById('reelsContainer');
 const balanceLabel = document.getElementById('balance');
 const notificationLabel = document.getElementById('notification');
@@ -15,7 +17,6 @@ let inBonus = false;
 const reelCount = 7;
 const rowCount = 3;
 
-// Symbols, payouts, sounds, and messages
 const images = ['10.png','jack.png','queen.png','king.png','ace.png','bonus.png','wild.png'];
 const symbolPay = {'10.png':1,'jack.png':2,'queen.png':3,'king.png':5,'ace.png':20,'bonus.png':3,'wild.png':0};
 const symbolMessages = {
@@ -28,7 +29,6 @@ const symbolMessages = {
     'wild.png': 'AUUUUHHH'
 };
 
-// Weighted symbols for probability
 const weights = {'10.png':40,'jack.png':25,'queen.png':15,'king.png':10,'ace.png':5,'bonus.png':4,'wild.png':1};
 const weightedSymbols = [];
 for(const s in weights){
@@ -38,7 +38,6 @@ for(const s in weights){
 const reels = [];
 const currentSymbols = Array.from({length: rowCount}, ()=>Array(reelCount).fill(null));
 
-// Initialize reels
 for(let r=0;r<rowCount;r++){
     for(let c=0;c<reelCount;c++){
         const div = document.createElement('div');
@@ -52,7 +51,6 @@ for(let r=0;r<rowCount;r++){
     }
 }
 
-// Update bonus/free spin counters
 function updateCounters(){
     if(inBonus){
         freeSpinsCounter.style.display='block';
@@ -65,7 +63,6 @@ function updateCounters(){
     }
 }
 
-// Main spin
 function spin(){
     const wager = parseInt(wagerInput.value);
     if(balance < wager && freeSpins === 0){
@@ -81,13 +78,11 @@ function spin(){
 
     let bonusTriggered = false;
 
-    // 1/25 guaranteed bonus
     if(Math.random() < 1/25 && freeSpins === 0){
         bonusTriggered = true;
         inBonus = true;
         freeSpins = 10;
         bonusPoints = 0;
-
         for(let r=0;r<rowCount;r++){
             for(let c=0;c<reelCount;c++){
                 const idx = r*reelCount+c;
@@ -101,29 +96,21 @@ function spin(){
     }
 
     let finalSymbols = [];
-
     if(!bonusTriggered){
-        const isLosingSpin = Math.random() < 0.30; // 30% lose
+        const isLosingSpin = Math.random() < 0.30;
         for(let r=0;r<rowCount;r++){
             for(let c=0;c<reelCount;c++){
-                if(isLosingSpin){
-                    finalSymbols[r*reelCount+c] = weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)];
-                } else {
-                    // Guaranteed random win: pick a symbol for the row
-                    const winSym = weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)];
-                    finalSymbols[r*reelCount+c] = winSym;
-                }
+                finalSymbols[r*reelCount+c] = weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)];
             }
         }
     }
 
-    // Animate reels with gentle slow-down
     for(let c=0;c<reelCount;c++){
         setTimeout(()=>{
             const start = Date.now();
-            const duration = 2000 + c*300; // staggered slow down
+            const duration = 2000 + c*300;
             function animateReel(){
-                const elapsed = Date.now() - start;
+                const elapsed = Date.now()-start;
                 if(elapsed < duration){
                     for(let r=0;r<rowCount;r++){
                         const idx = r*reelCount+c;
@@ -156,13 +143,11 @@ function spin(){
     }
 }
 
-// Check wins
 function checkWin(){
     const wager = parseInt(wagerInput.value);
     let messages = [];
     let winAmount = 0;
 
-    // Rows
     for(let r=0;r<rowCount;r++){
         const row = reels.slice(r*reelCount,(r+1)*reelCount);
         const sym = row[0].dataset.symbol;
@@ -175,22 +160,6 @@ function checkWin(){
         }
     }
 
-    // Diagonals
-    const diag1=[reels[0],reels[4],reels[8],reels[12],reels[16],reels[20],reels[24]];
-    const diag2=[reels[6],reels[12],reels[18],reels[24],reels[30],reels[36],reels[42]];
-
-    [diag1,diag2].forEach(d=>{
-        const sym = d[0].dataset.symbol;
-        if(d.every(x=>x.dataset.symbol===sym)){
-            const diagWin = symbolPay[sym]*wager;
-            winAmount += diagWin;
-            d.forEach(x=>x.style.border='3px solid red');
-            messages.push(symbolMessages[sym]);
-            if(inBonus) bonusPoints += diagWin;
-        }
-    });
-
-    // Deduplicate and remove parentheses
     const uniqueMessages = [...new Set(messages)].map(m=>m.replace(/\s*\(.*?\)/g,''));
     notificationLabel.textContent = uniqueMessages.length ? uniqueMessages.join(' | ') : 'No win this spin.';
     spinAmountDisplay.textContent = winAmount ? `Won: ${winAmount}` : '';
@@ -200,3 +169,5 @@ function checkWin(){
 
 spinButton.addEventListener('click', spin);
 updateCounters();
+
+});
