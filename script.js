@@ -169,7 +169,7 @@ function checkWin(boosted=false){
             winAmount += rowWin;
             row.forEach(d=>d.style.border='3px solid red');
 
-            // push only the plain symbol message (no parentheses)
+            // ONLY the symbol message
             messages.push(symbolMessages[sym]);
 
             symbolSounds[sym].currentTime=0;
@@ -186,9 +186,7 @@ function checkWin(boosted=false){
         winAmount+=diagWin;
         diag1.forEach(d=>d.style.border='3px solid red');
 
-        // push only the plain symbol message
         messages.push(symbolMessages[sym1]);
-
         symbolSounds[sym1].currentTime=0;
         symbolSounds[sym1].play();
         if(inBonus) bonusPoints+=diagWin;
@@ -201,16 +199,17 @@ function checkWin(boosted=false){
         winAmount+=diagWin;
         diag2.forEach(d=>d.style.border='3px solid red');
 
-        // push only the plain symbol message
         messages.push(symbolMessages[sym2]);
-
         symbolSounds[sym2].currentTime=0;
         symbolSounds[sym2].play();
         if(inBonus) bonusPoints+=diagWin;
     }
 
-    // Deduplicate messages so the same symbol message doesn't appear multiple times
-    const uniqueMessages = [...new Set(messages)];
+    // Remove duplicate messages
+    let uniqueMessages = [...new Set(messages)];
+
+    // 🔥 NEW: Remove anything inside parentheses, guaranteed
+    uniqueMessages = uniqueMessages.map(m => m.replace(/\s*\(.*?\)/g, ''));
 
     balance += winAmount;
     balanceLabel.textContent=`Balance: ${balance}`;
