@@ -15,25 +15,25 @@ const reelCount = 3;
 const rowCount = 3;
 
 // Symbols, payouts, sounds, and custom messages
-const images = ['images/10.png','images/jack.png','images/queen.png','images/king.png','images/ace.png','images/bonus.png','images/wild.png'];
-const symbolPay = {'images/10.png':1,'images/jack.png':2,'images/queen.png':3,'images/king.png':5,'images/ace.png':20,'images/bonus.png':3,'images/wild.png':0};
+const images = ['10.png','jack.png','queen.png','king.png','ace.png','bonus.png','wild.png'];
+const symbolPay = {'10.png':1,'jack.png':2,'queen.png':3,'king.png':5,'ace.png':20,'bonus.png':3,'wild.png':0};
 const symbolSounds = {
-    'images/10.png': new Audio('images/10.wav'),
-    'images/jack.png': new Audio('images/jack.wav'),
-    'images/queen.png': new Audio('images/queen.wav'),
-    'images/king.png': new Audio('images/king.wav'),
-    'images/ace.png': new Audio('images/ace.wav'),
-    'images/bonus.png': new Audio('images/bonus.wav'),
-    'images/wild.png': new Audio('images/badfeeling.wav')
+    '10.png': new Audio('10.wav'),
+    'jack.png': new Audio('jack.wav'),
+    'queen.png': new Audio('queen.wav'),
+    'king.png': new Audio('king.wav'),
+    'ace.png': new Audio('ace.wav'),
+    'bonus.png': new Audio('bonus.wav'),
+    'wild.png': new Audio('badfeeling.wav')
 };
 const symbolMessages = {
-    'images/10.png': 'COME ON!',
-    'images/jack.png': 'TIME TO KILL!',
-    'images/queen.png': 'I got your back.',
-    'images/king.png': 'I love you!',
-    'images/ace.png': 'I got a bad feeling',
-    'images/bonus.png': 'sector 9',
-    'images/wild.png': 'AUUUUHHH'
+    '10.png': 'COME ON!',
+    'jack.png': 'TIME TO KILL!',
+    'queen.png': 'I got your back.',
+    'king.png': 'I love you!',
+    'ace.png': 'I got a bad feeling',
+    'bonus.png': 'sector 9',
+    'wild.png': 'AUUUUHHH'
 };
 
 const reels = [];
@@ -54,7 +54,7 @@ for(let r=0;r<rowCount;r++){
 }
 
 // Spin sound
-const spinSound = new Audio('images/hulagirl.wav');
+const spinSound = new Audio('hulagirl.wav');
 spinSound.loop = true;
 let songPausedTime = 0;
 const spinDurationPerReel = 4000;
