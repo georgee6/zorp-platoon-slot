@@ -1,35 +1,75 @@
-body {
+/* Reset and body */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: "Arial", sans-serif;
     background-color: #111;
     color: white;
-    font-family: "Cooper Black", sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
+    justify-content: flex-start;
 }
 
+/* Reels container */
 #reelsContainer {
     display: grid;
-    grid-template-columns: repeat(7, 100px); /* 7 reels */
-    grid-template-rows: repeat(3, 100px);    /* 3 rows */
+    grid-template-columns: repeat(7, 80px); /* 7 reels */
+    grid-template-rows: repeat(3, 80px);    /* 3 rows */
     gap: 5px;
-    margin-bottom: 20px;
-    width: max-content;
+    margin-top: 20px;
 }
 
+/* Each reel cell */
 .reel {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
+    background-color: #222;
     background-size: cover;
+    background-position: center;
     border: 2px solid white;
-    border-radius: 10px;
-    transition: transform 0.5s ease-out;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #000;
+    transition: transform 0.2s ease-out;
 }
 
+/* Controls */
 #controls {
-    margin-bottom: 10px;
+    margin-top: 20px;
 }
 
-#status div {
-    margin: 5px 0;
+#controls input {
+    width: 50px;
+    padding: 5px;
+    margin-right: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+/* Status / info */
+#status {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#freeSpinsCounter, #bonusPointsCounter {
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* Spin button */
+#spinButton {
+    padding: 8px 20px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#spinButton:hover {
+    background-color: #218838;
 }
