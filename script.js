@@ -115,7 +115,6 @@ function spin(){
         freeSpins = 10;
         bonusPoints = 0;
 
-        // Fill screen with wilds for visual effect
         for(let r=0;r<rowCount;r++){
             for(let c=0;c<reelCount;c++){
                 const idx = r*reelCount+c;
@@ -131,14 +130,25 @@ function spin(){
 
     let finalSymbols = [];
 
-    // Generate symbols for normal spin (weighted)
     if(!bonusTriggered){
+        const isLosingSpin = Math.random() < 0.30; // 30% chance of losing spin
+
         for(let r=0;r<rowCount;r++){
             for(let c=0;c<reelCount;c++){
-                finalSymbols[r*reelCount+c] = weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)];
+                if(isLosingSpin){
+                    // Force row to not match
+                    let sym;
+                    do {
+                        sym = weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)];
+                    } while (sym === finalSymbols[r*reelCount]); // avoid matching first symbol
+                    finalSymbols[r*reelCount+c] = sym;
+                } else {
+                    finalSymbols[r*reelCount+c] = weightedSymbols[Math.floor(Math.random()*weightedSymbols.length)];
+                }
             }
         }
     } else {
+        // Bonus spin: all wilds
         for(let r=0;r<rowCount;r++){
             for(let c=0;c<reelCount;c++){
                 finalSymbols[r*reelCount+c] = 'wild.png';
@@ -249,7 +259,7 @@ function checkWin(){
     balanceLabel.textContent = `Balance: ${balance}`;
     notificationLabel.textContent = uniqueMessages.length ? uniqueMessages.join(' | ') : 'No win this spin.';
 
-    // Remove parentheses
+    // Remove parentheses if any
     notificationLabel.textContent = notificationLabel.textContent.replace(/\s*\(.*?\)/g, '');
 
     spinAmountDisplay.textContent = winAmount ? `Won: ${winAmount}` : '';
