@@ -169,7 +169,7 @@ function checkWin(boosted=false){
             winAmount += rowWin;
             row.forEach(d=>d.style.border='3px solid red');
 
-            // **Modified: no parentheses extra text**
+            // push only the plain symbol message (no parentheses)
             messages.push(symbolMessages[sym]);
 
             symbolSounds[sym].currentTime=0;
@@ -186,7 +186,7 @@ function checkWin(boosted=false){
         winAmount+=diagWin;
         diag1.forEach(d=>d.style.border='3px solid red');
 
-        // **Modified**
+        // push only the plain symbol message
         messages.push(symbolMessages[sym1]);
 
         symbolSounds[sym1].currentTime=0;
@@ -201,7 +201,7 @@ function checkWin(boosted=false){
         winAmount+=diagWin;
         diag2.forEach(d=>d.style.border='3px solid red');
 
-        // **Modified**
+        // push only the plain symbol message
         messages.push(symbolMessages[sym2]);
 
         symbolSounds[sym2].currentTime=0;
@@ -209,9 +209,12 @@ function checkWin(boosted=false){
         if(inBonus) bonusPoints+=diagWin;
     }
 
+    // Deduplicate messages so the same symbol message doesn't appear multiple times
+    const uniqueMessages = [...new Set(messages)];
+
     balance += winAmount;
     balanceLabel.textContent=`Balance: ${balance}`;
-    notificationLabel.textContent=messages.length ? messages.join(' | ') : 'No win this spin.';
+    notificationLabel.textContent = uniqueMessages.length ? uniqueMessages.join(' | ') : 'No win this spin.';
     spinAmountDisplay.textContent=winAmount ? `Won: ${winAmount}` : '';
 
     if(inBonus) updateCounters();
