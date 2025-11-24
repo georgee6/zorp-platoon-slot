@@ -17,8 +17,8 @@ const reelCount = 3;
 const rowCount = 3;
 
 // Base URLs for images and audio
-const baseImageURL = 'https://raw.githubusercontent.com/georgee6/zorp-platoon-slot/main/images/';
-const baseAudioURL = 'https://raw.githubusercontent.com/georgee6/zorp-platoon-slot/main/audio/';
+const baseImageURL = 'https://raw.githubusercontent.com/georgee6/zorp-platoon-slot/main/';
+const baseAudioURL = 'https://raw.githubusercontent.com/georgee6/zorp-platoon-slot/main/';
 
 // Symbols, payouts, sounds, and messages
 const images = [
@@ -405,4 +405,5 @@ function checkWin(boosted=false){
 
 spinButton.addEventListener('click', spin);
 updateCounters();
+
 
