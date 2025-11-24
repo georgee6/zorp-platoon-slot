@@ -14,7 +14,7 @@ let inBonus = false;
 const reelCount = 3;
 const rowCount = 3;
 
-// Symbols, payouts, sounds, and messages
+// Symbols, payouts, sounds, messages
 const images = ['10.png','jack.png','queen.png','king.png','ace.png','bonus.png','wild.png'];
 const symbolPay = {'10.png':1,'jack.png':2,'queen.png':3,'king.png':5,'ace.png':20,'bonus.png':3,'wild.png':0};
 const symbolSounds = {
@@ -36,7 +36,7 @@ const symbolMessages = {
     'wild.png': 'AUUUUHHH'
 };
 
-// Weighted symbols for realistic odds
+// Weighted symbols
 const weights = {
     '10.png': 40,
     'jack.png': 25,
@@ -76,7 +76,7 @@ spinSound.loop = true;
 let songPausedTime = 0;
 const spinDurationPerReel = 4000;
 
-// Update counters for bonus
+// Update counters
 function updateCounters(){
     if(inBonus){
         freeSpinsCounter.style.display='block';
@@ -89,7 +89,7 @@ function updateCounters(){
     }
 }
 
-// Main spin function
+// Main spin
 function spin(){
     const wager = parseInt(wagerInput.value);
     if(balance < wager && freeSpins === 0){
@@ -107,14 +107,15 @@ function spin(){
     spinSound.play();
 
     let bonusTriggered = false;
-    // 1 in 25 chance for guaranteed bonus
+
+    // 1 in 25 chance guaranteed bonus
     if(Math.random() < 1/25 && freeSpins === 0){
         bonusTriggered = true;
         inBonus = true;
         freeSpins = 10;
         bonusPoints = 0;
 
-        // Fill screen with wilds for bonus visual effect
+        // Fill screen with wilds for visual effect
         for(let r=0;r<rowCount;r++){
             for(let c=0;c<reelCount;c++){
                 const idx = r*reelCount+c;
@@ -130,7 +131,7 @@ function spin(){
 
     let finalSymbols = [];
 
-    // Generate normal spin symbols if no bonus
+    // Generate symbols for normal spin (weighted)
     if(!bonusTriggered){
         for(let r=0;r<rowCount;r++){
             for(let c=0;c<reelCount;c++){
@@ -241,14 +242,14 @@ function checkWin(){
         if(inBonus) bonusPoints += diagWin;
     }
 
-    // Remove duplicate messages
+    // Remove duplicates
     let uniqueMessages = [...new Set(messages)];
 
     balance += winAmount;
     balanceLabel.textContent = `Balance: ${balance}`;
     notificationLabel.textContent = uniqueMessages.length ? uniqueMessages.join(' | ') : 'No win this spin.';
 
-    // Remove parentheses just in case
+    // Remove parentheses
     notificationLabel.textContent = notificationLabel.textContent.replace(/\s*\(.*?\)/g, '');
 
     spinAmountDisplay.textContent = winAmount ? `Won: ${winAmount}` : '';
